@@ -3,5 +3,5 @@ tess.pytesseract.tesseract_cmd = r"C:\Users\julie\AppData\Local\Tesseract-OCR\te
 from PIL import Image
 
 image = Image.open("stef.jpg")
-text = tess.image_to_string(image)
+text = tess.image_to_string(image, lang="eng")
 print(text)
