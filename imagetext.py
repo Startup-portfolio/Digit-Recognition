@@ -1,7 +1,7 @@
-import pytesseract as tess
-tess.pytesseract.tesseract_cmd = r"C:\Users\julie\AppData\Local\Tesseract-OCR\tesseract.exe"
+import pytesseract
 from PIL import Image
 
-image = Image.open("stef.jpg")
-text = tess.image_to_string(image, lang="eng")
+
+image = Image.open("123.jpg")
+text = pytesseract.image_to_string(image, lang="eng")
 print(text)
