@@ -1,4 +1,9 @@
+
 import pytesseract
+
+import pytesseract as tess
+tess.pytesseract.tesseract_cmd = r"Tesseract-OCR\tesseract.exe"
+
 from PIL import Image
 
 
