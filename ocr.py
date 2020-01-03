@@ -8,46 +8,21 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from PIL import Image
 from tensorflow import keras
-from keras.datasets import mnist
+from tensorflow.keras.datasets import mnist
 
-class Window(QMainWindow):
-    def __init__(self):
-        super().__init__()
-
-        title = "Paint Application"
-        top = 400
-        left = 400
-        width = 800
-        height = 600
-
-        self.setWindowTitle(title)
-        self.setGeometry(top, left, width, height)
-        self.widget = QWidget(self)
-        self.widget.move(100, 100)
-        self.image = QImage(QSize(280, 280), QImage.Format_RGB32)
-        self.pix = QPixmap().fromImage(self.image)
-        self.pix = self.pix.copy(100, 0, 280, 280)
-        self.image.fill(Qt.white)
-        #self.image.resize(280, 280)
+class Widget1(QWidget):
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent=parent)
+        lay = QVBoxLayout(self)
+        self.lbl = QLabel(self)
+        self.lbl.setGeometry(0, 0, 280, 280)
+        self.lbl.setPixmap(QPixmap(QSize(280, 280)))
+        self.lbl.pixmap().fill(Qt.white)
+        lay.addWidget(self.lbl)
         self.drawing = False
         self.brushSize = 4
         self.brushColor = Qt.black
         self.lastPoint = QPoint()
-        self.submit = QPushButton('Submit', self)
-        self.submit.move(300, 300)
-        self.submit.clicked.connect(self.save)
-        self.clear = QPushButton('Clear', self)
-        self.clear.move(400, 300)
-        self.clear.clicked.connect(self.erase)
-        self.prediction = QLabel("Prediction: ", self)
-        self.prediction.move(350, 400)
-
-    def save(self):
-        self.image.save("image.png")
-        self.image2 = Image.open("image.png")
-        self.image2 = self.image2.resize((28,28),Image.ANTIALIAS)
-        self.image2.save("image.png")
-        self.prediction.setText('Prediction: ' + str(self.predict()))
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -57,7 +32,7 @@ class Window(QMainWindow):
 
     def mouseMoveEvent(self, event):
         if(event.buttons() & Qt.LeftButton) & self.drawing:
-            painter = QPainter(self.image)
+            painter = QPainter(self.lbl.pixmap())
             painter.setPen(QPen(self.brushColor, self.brushSize, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
             painter.drawLine(self.lastPoint, event.pos())
             self.lastPoint = event.pos()
@@ -67,15 +42,47 @@ class Window(QMainWindow):
         if event.button() == Qt.LeftButton:
             self.drawing = False
 
-
     def paintEvent(self, event):
-        canvasPainter  = QPainter(self)
-        canvasPainter.drawImage(self.image.rect(), self.image, self.image.rect() )
+        canvasPainter  = QPainter(self.lbl.pixmap())
+        canvasPainter.drawPixmap(0, 0, self.lbl.pixmap())
 
+class stackedExample(QWidget):
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent=parent)
 
-    def erase(self):
-        self.image.fill(Qt.white)
+        title = "Didgit Recognition"
+        top = 400
+        left = 400
+        width = 500
+        height = 400
+
+        self.setWindowTitle(title)
+        self.setGeometry(top, left, width, height)
+
+        self.Stack = Widget1(self)
+        self.Stack.move((width/2-140), 20)
+
+        btnClear = QPushButton("Clear", self)
+        btnClear.clicked.connect(self.clear)
+        btnClear.move((width/2-140), 360)
+        btnSubmit = QPushButton("Submit", self)
+        btnSubmit.clicked.connect(self.submit)
+        btnSubmit.move((width/2-30), 360)
+
+        self.prediction = QLabel(self)
+        self.prediction.setText("Prediction: ")
+        self.prediction.setGeometry((width/2-140), 320, 100, 30)
+
+    def clear(self):
+        self.Stack.lbl.pixmap().fill(Qt.white)
         self.update()
+
+    def submit(self, other):
+        self.Stack.lbl.pixmap().save("image.png")
+        self.image2 = Image.open("image.png")
+        self.image2 = self.image2.resize((28,28), Image.ANTIALIAS)
+        self.image2.save("image.png")
+        self.prediction.setText('Prediction: ' + str(self.predict()))
 
     def createModel(self):
         (x_train, y_train), (x_test, y_test) = mnist.load_data() #loading data
@@ -104,10 +111,13 @@ class Window(QMainWindow):
 
         return(str(self.assume[0].argmax()))
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = Window()
-    window.createModel()
-    window.show()
-    app.exec()
+    w = stackedExample()
+    w.createModel()
+    w.show()
+    sys.exit(app.exec_())
+
+#Put it all to train data
+#Save model
+#Character dataset 
