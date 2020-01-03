@@ -20,7 +20,7 @@ class Widget1(QWidget):
         self.lbl.pixmap().fill(Qt.white)
         lay.addWidget(self.lbl)
         self.drawing = False
-        self.brushSize = 4
+        self.brushSize = 10
         self.brushColor = Qt.black
         self.lastPoint = QPoint()
 
@@ -120,4 +120,5 @@ if __name__ == '__main__':
 
 #Put it all to train data
 #Save model
-#Character dataset 
+#Character dataset
+#Throw error message if accuracy < .5
