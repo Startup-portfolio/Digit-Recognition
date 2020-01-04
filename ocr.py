@@ -50,7 +50,7 @@ class stackedExample(QWidget):
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
 
-        title = "Didgit Recognition"
+        title = "Digit Recognition"
         top = 400
         left = 400
         width = 500
