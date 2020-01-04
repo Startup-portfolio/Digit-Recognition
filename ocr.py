@@ -4,11 +4,10 @@ from PyQt5.QtGui import QIcon, QImage, QPainter, QPen, QBrush, QPixmap
 from PyQt5.QtCore import Qt, QPoint, QSize, QRect
 import sys
 from PIL import Image
-import tensorflow as tf
 import matplotlib.pyplot as plt
 from PIL import Image
-from tensorflow import keras
 from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import load_model
 
 class Widget1(QWidget):
     def __init__(self, parent=None):
@@ -84,20 +83,8 @@ class stackedExample(QWidget):
         self.image2.save("image.png")
         self.prediction.setText('Prediction: ' + str(self.predict()))
 
-    def createModel(self):
-        (x_train, y_train), (x_test, y_test) = mnist.load_data() #loading data
-
-        x_train = x_train / 255.0
-        x_test = x_test / 255.0
-
-        self.model = keras.Sequential([ #creating model
-            keras.layers.Flatten(input_shape=(28,28)),
-            keras.layers.Dense(128, activation="relu"), #128 layers
-            keras.layers.Dense(10, activation="softmax") #10 output layers
-            ])
-
-        self.model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-        self.model.fit(x_train, y_train, epochs=2) #train model
+    def loaded_model(self):
+        self.model = load_model('model.h5')
 
     def predict(self):
         self.im = Image.open("image.png").convert('L')  #convert image to 8-bit grayscal
@@ -114,7 +101,7 @@ class stackedExample(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     w = stackedExample()
-    w.createModel()
+    w.loaded_model()
     w.show()
     sys.exit(app.exec_())
 
